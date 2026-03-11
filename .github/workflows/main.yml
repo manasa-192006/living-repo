@@ -1,0 +1,29 @@
+name: Update README Heartbeat
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # This runs every 6 hours
+  workflow_dispatch:      # This lets you run it manually for testing
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run update script
+        run: python update_bot.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "action@github.com"
+          git add README.md
+          git commit -m "The Machine has updated its status" || exit 0
+          git push
